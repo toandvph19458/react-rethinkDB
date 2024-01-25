@@ -1,85 +1,108 @@
-// import React from 'react';
-import {
-  Flex,
-  Heading,
-  Input,
-  Button,
-  FormControl,
-  FormLabel,
-  Switch,
-  useColorMode,
-  useColorModeValue,
-} from '@chakra-ui/react';
-import rethinkdb from 'rethinkdb';
-
+import { DateTime } from "luxon";
+import { useMemo } from "react";
+import "./App.css";
+import movies from "./MOVIE_DATA.json";
+import BasicTable from "./components/BasicTable";
+import Table from "./components/TableReoder";
+import TextInput from "./components/Inputchange";
+import TableBeautifull from "./components/TableBeautifull";
 
 const App = () => {
-  const { toggleColorMode } = useColorMode();
-  const formBackground = useColorModeValue('gray.100', 'gray.700');
+  const data = useMemo(() => movies, []);
 
-  (async ()=>{
-    const connection = await rethinkdb.connect({
-      host: 'localhost',
-      port: 28015,
-      db: 'test',
-    });
-  
-  // Chèn một bản ghi mới
-  await rethinkdb.table('users').insert({
-      username: 'ducduc',
-      email: 'ducduc@gmail.com',
-    }).run(connection);
-  
-  // Lấy tất cả bản ghi từ table 'users'
-  const result = await rethinkdb.table('users').run(connection);
-  
-  // Lặp qua các bản ghi và in ra thông tin
-  await result.eachAsync((row) => {
-    console.log(row);
-  });
-  
-  // Đóng kết nối sau khi thực hiện các truy vấn
-  connection.close();
-  })()
+  /** @type import('@tanstack/react-table').ColumnDef<any> */
+  const columns = [
+    {
+      header: "ID",
+      accessorKey: "id",
+      footer: "ID",
+    },
+    {
+      header: "Name",
+      columns: [
+        {
+          header: "First",
+          accessorKey: "first_name",
+          footer: "First name",
+        },
+        {
+          header: "Last",
+          accessorKey: "last_name",
+          footer: "Last name",
+        },
+      ],
+    },
+    // {
+    //   header: 'Name',
+    //   accessorFn: row => `${row.first_name} ${row.last_name}`,
+    // },
+    // {
+    //   header: 'First name',
+    //   accessorKey: 'first_name',
+    //   footer: 'First name',
+    // },
+    // {
+    //   header: 'Last name',
+    //   accessorKey: 'last_name',
+    //   footer: 'Last name',
+    // },
+    {
+      header: "Email",
+      accessorKey: "email",
+      footer: "Email",
+    },
+    {
+      header: "Gender",
+      accessorKey: "gender",
+      footer: "Gender",
+    },
+    {
+      header: "Date of birth",
+      accessorKey: "dob",
+      footer: "Date of birth",
+      cell: (info) =>
+        DateTime.fromISO(info.getValue()).toLocaleString(DateTime.DATE_MED),
+    },
+  ];
 
+  const movieColumns = [
+    {
+      header: "ID",
+      accessorKey: "id",
+    },
+    {
+      header: "Name",
+      accessorKey: "name",
+    },
+    {
+      header: "Genre",
+      accessorKey: "genre",
+    },
+    {
+      header: "Rating",
+      accessorKey: "rating",
+    },
+  ];
+  const column1 = [
+    { Header: "ID", accessor: "id" },
+    { Header: "Name", accessor: "name" },
+    { Header: "Age", accessor: "age" },
+  ];
+
+  const data1 = [
+    { id: 1, name: "John Doe", age: 28 },
+    { id: 2, name: "Jane Smith", age: 35 },
+    { id: 3, name: "Bob Johnson", age: 42 },
+  ];
   return (
-    <Flex h="100vh" alignItems="center" justifyContent="center">
-      <Flex
-        flexDirection="column"
-        bg={formBackground}
-        p={12}
-        borderRadius={8}
-        boxShadow="lg"
-      >
-        <Heading mb={6}>Log In</Heading>
-        <Input
-          placeholder="johndoe@gmail.com"
-          type="email"
-          variant="filled"
-          mb={3}
-        />
-        <Input
-          placeholder="**********"
-          type="password"
-          variant="filled"
-          mb={6}
-        />
-        <Button colorScheme="teal" mb={8}>
-          Log In
-        </Button>
-        <FormControl display="flex" alignItems="center">
-          <FormLabel htmlFor="dark_mode" mb="0">
-            Enable Dark Mode?
-          </FormLabel>
-          <Switch
-            id="dark_mode"
-            colorScheme="teal"
-            size="lg"
-            onChange={toggleColorMode}
-          />
-        </FormControl>
-      </Flex>
-    </Flex>
+    <>
+      <h1>React-table</h1>
+      {/* <BasicTable data={data} columns={movieColumns} /> */}
+      {/* <GanttChart /> */}
+      <Table />
+      <TextInput />
+      <TableBeautifull />
+    </>
   );
 };
 
