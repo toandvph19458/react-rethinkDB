@@ -17,7 +17,7 @@ const reorder = (list, startIndex, endIndex) => {
 };
 
 const TableBeautiful = () => {
-  const [items, setItems] = useState(getItems(10));
+  const [items, setItems] = useState(getItems(9));
 
   const onDragEnd = (result) => {
     // Dropped outside the list
@@ -47,7 +47,7 @@ const TableBeautiful = () => {
         </thead>
 
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="droppable">
+          <Droppable droppableId="droppable" direction="vertical">
             {(provided) => (
               <tbody {...provided.droppableProps} ref={provided.innerRef}>
                 {items.map((item, index) => (
@@ -57,6 +57,11 @@ const TableBeautiful = () => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
+                        style={{
+                          border: "1px solid #ddd",
+                          padding: "8px",
+                          cursor: "move",
+                        }}
                       >
                         <td>{item.content}</td>
                         <td>2</td>
